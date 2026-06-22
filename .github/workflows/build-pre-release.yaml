@@ -69,34 +69,32 @@ jobs:
           echo "cat signing.properties"
           cat signing.properties
 
-      - name: Resolve release tag
-        id: release
-        run: |
-          VERSION=$(grep 'versionName = ' build.gradle.kts | head -1 | sed 's/.*"\(.*\)".*/\1/')
-          SHORT_SHA=${GITHUB_SHA::7}
-          TAG="Prerelease-alpha-${VERSION}-${SHORT_SHA}"
-          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
-          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
-          echo "Release tag: ${TAG}"
-
       - name: Pre-release Build
         if: success()
         run: ./gradlew --no-daemon app:assembleAlphaRelease
+
+      - name: Delete old Prerelease-alpha-v2
+        continue-on-error: true
+        uses: dev-drprasad/delete-tag-and-release@v1.1
+        with:
+          tag_name: Prerelease-alpha-v2
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          delete_release: true
 
       - name: Create and push tag
         if: success()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git tag "${{ steps.release.outputs.tag }}" "${GITHUB_SHA}"
-          git push origin "refs/tags/${{ steps.release.outputs.tag }}"
+          git tag -f "Prerelease-alpha-v2" "${GITHUB_SHA}"
+          git push -f origin "refs/tags/Prerelease-alpha-v2"
 
       - name: Create draft release and upload APKs
         if: success()
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ steps.release.outputs.tag }}
-          name: PreRelease Alpha ${{ steps.release.outputs.version }} (${{ steps.release.outputs.tag }})
+          tag_name: Prerelease-alpha-v2
+          name: PreRelease Alpha
           draft: true
           prerelease: true
           generate_release_notes: true
@@ -104,7 +102,7 @@ jobs:
 
       - name: Publish release
         if: success()
-        run: gh release edit "${{ steps.release.outputs.tag }}" --draft=false
+        run: gh release edit "Prerelease-alpha-v2" --draft=false
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
