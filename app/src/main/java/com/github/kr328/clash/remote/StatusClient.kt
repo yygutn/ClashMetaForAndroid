@@ -2,6 +2,7 @@ package com.github.kr328.clash.remote
 
 import android.content.Context
 import android.net.Uri
+import android.os.Bundle
 import com.github.kr328.clash.common.constants.Authorities
 import com.github.kr328.clash.common.log.Log
 import com.github.kr328.clash.service.StatusProvider
@@ -15,16 +16,22 @@ class StatusClient(private val context: Context) {
                 .build()
         }
 
+    fun isServiceRunning(): Boolean {
+        return queryStatus() != null
+    }
+
     fun currentProfile(): String? {
+        return queryStatus()?.getString("name")
+    }
+
+    private fun queryStatus(): Bundle? {
         return try {
-            val result = context.contentResolver.call(
+            context.contentResolver.call(
                 uri,
                 StatusProvider.METHOD_CURRENT_PROFILE,
                 null,
-                null
+                null,
             )
-
-            result?.getString("name")
         } catch (e: Exception) {
             Log.w("Query current profile: $e", e)
 
