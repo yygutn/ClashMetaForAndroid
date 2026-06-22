@@ -24,16 +24,20 @@ update script only refreshes git submodules and `local.properties`; it intention
 reinstall the SDK/Go or re-apply the Go patches (those live in the snapshot and re-applying patches
 would fail).
 
-### Build (development)
+### Build
 
-- Debug APKs: `./gradlew --no-daemon app:assembleAlphaDebug` (use `--no-daemon`; matches CI).
-- Outputs: `app/build/outputs/apk/alpha/debug/cmfa-*-<abi>-debug.apk` (one per ABI + `universal`).
-- The default product flavor is `alpha`; there is also a `meta` flavor. Release build is
-  `app:assembleAlphaRelease`.
-- First build compiles the Go kernel for all 4 ABIs (arm64-v8a, armeabi-v7a, x86, x86_64) and takes
-  several minutes. `app:downloadGeoFiles` (auto-wired into `assemble`) downloads geo databases from
-  GitHub, so the build needs network access.
-- Installed `applicationId` is `com.github.metacubex.clash.alpha`; the launcher activity is
+`README.md` has the canonical build steps — follow those. The notes below are only the
+cloud/dev deltas and corrections to `README.md`:
+
+- **Use JDK 21, not "OpenJDK 11"** as the README says (CI and the actual build require 21).
+- The README's "Golang" means the **patched MetaCubeX Go 1.26** described above, and the NDK must be
+  `29.0.14206865` — not just any Go/NDK.
+- For **development**, build the debug variant: `./gradlew --no-daemon app:assembleAlphaDebug`
+  (README shows the release variant `app:assembleAlphaRelease`). Outputs land in
+  `app/build/outputs/apk/alpha/<debug|release>/cmfa-*-<abi>-debug.apk` (one per ABI + `universal`).
+- First build compiles the Go kernel for all 4 ABIs and takes several minutes; `app:downloadGeoFiles`
+  (auto-wired into `assemble`) downloads geo databases from GitHub, so the build needs network access.
+- Installed debug `applicationId` is `com.github.metacubex.clash.alpha`; launcher activity is
   `com.github.kr328.clash.MainActivity`.
 
 ### Lint / tests
