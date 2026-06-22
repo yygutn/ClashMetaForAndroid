@@ -14,7 +14,9 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v6
-      
+        with:
+          fetch-depth: 0
+
       - name: Checkout submodules
         run: git submodule update --init --recursive --force
 
@@ -67,26 +69,44 @@ jobs:
           echo "cat signing.properties"
           cat signing.properties
 
+      - name: Resolve release tag
+        id: release
+        run: |
+          VERSION=$(grep 'versionName = ' build.gradle.kts | head -1 | sed 's/.*"\(.*\)".*/\1/')
+          SHORT_SHA=${GITHUB_SHA::7}
+          TAG="Prerelease-alpha-${VERSION}-${SHORT_SHA}"
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "Release tag: ${TAG}"
+
       - name: Pre-release Build
         if: success()
         run: ./gradlew --no-daemon app:assembleAlphaRelease
 
-      # Delete old Prerelease-alpha (no-op when the tag does not exist yet)
-      - uses: dev-drprasad/delete-tag-and-release@v1.1
-        continue-on-error: true
-        with:
-          tag_name: Prerelease-alpha
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          delete_release: true
-
-      - name: Upload Alpha
-        uses: softprops/action-gh-release@v2
+      - name: Create and push tag
         if: success()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag "${{ steps.release.outputs.tag }}" "${GITHUB_SHA}"
+          git push origin "refs/tags/${{ steps.release.outputs.tag }}"
+
+      - name: Create draft release and upload APKs
+        if: success()
+        uses: softprops/action-gh-release@v2
         with:
-          tag_name: Prerelease-alpha
-          files: app/build/outputs/apk/alpha/release/*
+          tag_name: ${{ steps.release.outputs.tag }}
+          name: PreRelease Alpha ${{ steps.release.outputs.version }} (${{ steps.release.outputs.tag }})
+          draft: true
           prerelease: true
           generate_release_notes: true
+          files: app/build/outputs/apk/alpha/release/*
+
+      - name: Publish release
+        if: success()
+        run: gh release edit "${{ steps.release.outputs.tag }}" --draft=false
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Release Changelog Builder
         uses: mikepenz/release-changelog-builder-action@v4
