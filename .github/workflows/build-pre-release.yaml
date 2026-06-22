@@ -5,6 +5,9 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write
+
 jobs:
   BuildPreRelease:
     runs-on: ubuntu-latest
@@ -68,23 +71,17 @@ jobs:
         if: success()
         run: ./gradlew --no-daemon app:assembleAlphaRelease
 
-      # Delete old Prerelease-alpha
+      # Delete old Prerelease-alpha (no-op when the tag does not exist yet)
       - uses: dev-drprasad/delete-tag-and-release@v1.1
+        continue-on-error: true
         with:
           tag_name: Prerelease-alpha
           github_token: ${{ secrets.GITHUB_TOKEN }}
           delete_release: true
 
-      - name: Tag Repo
-        uses: richardsimko/update-tag@v1
-        with:
-          tag_name: Prerelease-alpha
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Upload Alpha
         uses: softprops/action-gh-release@v2
-        if: ${{  success() }}
+        if: success()
         with:
           tag_name: Prerelease-alpha
           files: app/build/outputs/apk/alpha/release/*
