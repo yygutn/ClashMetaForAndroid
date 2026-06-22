@@ -1,0 +1,62 @@
+From 04d50a2b437eaed69471b3097d4156bcb6c9c8bd Mon Sep 17 00:00:00 2001
+From: Cursor Agent <cursoragent@cursor.com>
+Date: Mon, 22 Jun 2026 09:31:38 +0000
+Subject: [PATCH] =?UTF-8?q?=E7=BB=9F=E8=AE=A1=E6=B5=81=E9=87=8F=E6=97=B6?=
+ =?UTF-8?q?=E6=8E=92=E9=99=A4=E7=9B=B4=E8=BF=9E=E4=B8=8E=E9=9D=9E=E4=BB=A3?=
+ =?UTF-8?q?=E7=90=86=E5=87=BA=E7=AB=99=E8=BF=9E=E6=8E=A5?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+---
+ tunnel/tunnel.go | 20 ++++++++++++++++++--
+ 1 file changed, 18 insertions(+), 2 deletions(-)
+
+diff --git a/tunnel/tunnel.go b/tunnel/tunnel.go
+index 470f729..d3933ee 100644
+--- a/tunnel/tunnel.go
++++ b/tunnel/tunnel.go
+@@ -474,7 +474,7 @@ func handleUDPConn(packet C.PacketAdapter) {
+ 			}
+ 			logMetadata(metadata, rule, rawPc)
+ 
+-			pc := statistic.NewUDPTracker(rawPc, statistic.DefaultManager, metadata, rule, 0, 0, true)
++			pc := statistic.NewUDPTracker(rawPc, statistic.DefaultManager, metadata, rule, 0, 0, shouldPushToManager(rawPc))
+ 
+ 			sender.AddMapping(originMetadata, dialMetadata)
+ 			oAddrPort := dialMetadata.AddrPort()
+@@ -610,7 +610,7 @@ func handleTCPConn(connCtx C.ConnContext) {
+ 	}
+ 	logMetadata(metadata, rule, remoteConn)
+ 
+-	remoteConn = statistic.NewTCPTracker(remoteConn, statistic.DefaultManager, metadata, rule, int64(peekLen), 0, true)
++	remoteConn = statistic.NewTCPTracker(remoteConn, statistic.DefaultManager, metadata, rule, int64(peekLen), 0, shouldPushToManager(remoteConn))
+ 	defer func(remoteConn C.Conn) {
+ 		_ = remoteConn.Close()
+ 	}(remoteConn)
+@@ -622,6 +622,22 @@ func handleTCPConn(connCtx C.ConnContext) {
+ 	handleSocket(conn, remoteConn)
+ }
+ 
++// shouldPushToManager reports whether a connection's traffic should count toward
++// global notification statistics. Direct, reject, and other non-proxy outbounds
++// are excluded so only proxied traffic is shown.
++func shouldPushToManager(conn C.Connection) bool {
++	chains := conn.Chains()
++	if len(chains) == 0 {
++		return false
++	}
++	switch chains[0] {
++	case "DIRECT", "COMPATIBLE", "REJECT", "REJECT-DROP":
++		return false
++	default:
++		return true
++	}
++}
++
+ func logMetadataErr(metadata *C.Metadata, rule C.Rule, proxy C.ProxyAdapter, err error) {
+ 	if rule == nil {
+ 		log.Warnln("[%s] dial %s %s --> %s error: %s", strings.ToUpper(metadata.NetWork.String()), proxy.Name(), metadata.SourceDetail(), metadata.RemoteAddress(), err.Error())
+-- 
+2.43.0
+
