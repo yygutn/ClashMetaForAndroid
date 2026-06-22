@@ -7,6 +7,12 @@ embedded Go `mihomo` proxy kernel compiled to `libclash.so` via the NDK). There 
 server/backend**; "running the product" means building the APK and running it on an Android
 emulator/device. See `README.md` for the canonical build steps.
 
+This is a **submodule project**: the `mihomo` kernel lives in the git submodule
+`core/src/foss/golang/clash`, which is **required before building**. `.gitmodules` points it at the
+fork `https://github.com/yygutn/mihomo` (tracking branch `Alpha`); the main repo pins a specific
+kernel commit. `git submodule update --init --recursive` (run by the update script) checks out that
+pinned commit — to advance the kernel, update the gitlink against the fork's `Alpha`, then rebuild.
+
 ### Environment (already provisioned in the VM snapshot)
 
 The following are pre-installed and persisted in the VM image (do not reinstall):
