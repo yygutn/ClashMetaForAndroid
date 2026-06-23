@@ -222,6 +222,7 @@
         <receiver
             android:name=".ToggleWidgetProvider"
             android:exported="true"
+            android:icon="@drawable/ic_logo_service"
             android:label="@string/widget_toggle_label">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -230,12 +231,6 @@
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/widget_toggle_info" />
-            <meta-data
-                android:name="android.appwidget.honor.provider"
-                android:resource="@xml/widget_toggle_info" />
-            <meta-data
-                android:name="com.hihonor.widget.type"
-                android:value="honorcard" />
         </receiver>
 
         <receiver

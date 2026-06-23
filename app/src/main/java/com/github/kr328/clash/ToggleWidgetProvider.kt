@@ -6,7 +6,6 @@ import android.appwidget.AppWidgetProvider
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.widget.RemoteViews
 import com.github.kr328.clash.common.constants.Intents
 import com.github.kr328.clash.design.R as DesignR
@@ -57,6 +56,10 @@ class ToggleWidgetProvider : AppWidgetProvider() {
                     else -> context.getText(DesignR.string.stopped)
                 },
             )
+            views.setImageViewResource(
+                R.id.widget_toggle,
+                if (running) R.drawable.widget_toggle_track_on else R.drawable.widget_toggle_track_off,
+            )
 
             val toggleIntent = Intent(context, ToggleWidgetReceiver::class.java).apply {
                 action = Intents.ACTION_WIDGET_TOGGLE
@@ -68,16 +71,8 @@ class ToggleWidgetProvider : AppWidgetProvider() {
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
             )
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                views.setCompoundButtonChecked(R.id.widget_switch, running)
-                views.setOnCheckedChangeResponse(
-                    R.id.widget_switch,
-                    RemoteViews.RemoteResponse.fromPendingIntent(pendingIntent),
-                )
-            } else {
-                views.setOnClickPendingIntent(R.id.widget_switch, pendingIntent)
-                views.setOnClickPendingIntent(R.id.widget_root, pendingIntent)
-            }
+            views.setOnClickPendingIntent(R.id.widget_toggle, pendingIntent)
+            views.setOnClickPendingIntent(R.id.widget_root, pendingIntent)
 
             appWidgetManager.updateAppWidget(appWidgetId, views)
         }

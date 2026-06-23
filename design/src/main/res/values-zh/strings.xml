@@ -271,7 +271,7 @@
     <string name="external_control_activity">外部控制</string>
     <string name="external_control_started">Clash.Meta 服务已启动</string>
     <string name="external_control_stopped">Clash.Meta 服务已停止</string>
-    <string name="widget_toggle_label">Clash 开关</string>
+    <string name="widget_toggle_label">Clash Meta 开关</string>
     <string name="widget_toggle_description">在桌面或负一屏快速启动/停止 Clash Meta。</string>
     <string name="widget_toggle_category">桌面卡片</string>
     <string name="widget_pin_title">添加开关卡片</string>

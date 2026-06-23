@@ -46,10 +46,10 @@
             android:textSize="12dp" />
     </LinearLayout>
 
-    <Switch
-        android:id="@+id/widget_switch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        android:focusable="true" />
+    <ImageView
+        android:id="@+id/widget_toggle"
+        android:layout_width="44dp"
+        android:layout_height="24dp"
+        android:contentDescription="@null"
+        android:scaleType="fitCenter" />
 </LinearLayout>
