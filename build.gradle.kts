@@ -171,6 +171,7 @@ subprojects {
             }
             named("debug") {
                 versionNameSuffix = ".debug"
+                signingConfig = signingConfigs.findByName("release") ?: signingConfigs["debug"]
             }
         }
 
