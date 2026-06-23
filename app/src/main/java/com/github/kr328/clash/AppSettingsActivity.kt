@@ -10,6 +10,7 @@ import com.github.kr328.clash.design.model.Behavior
 import com.github.kr328.clash.design.store.UiStore.Companion.mainActivityAlias
 import com.github.kr328.clash.service.store.ServiceStore
 import com.github.kr328.clash.util.ApplicationObserver
+import com.github.kr328.clash.util.ClashShortcut
 import com.github.kr328.clash.util.ToggleWidget
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.selects.select
@@ -23,7 +24,9 @@ class AppSettingsActivity : BaseActivity<AppSettingsDesign>(), Behavior {
             this,
             clashRunning,
             ::onHideIconChange,
+            ClashShortcut.widgetProviderCount(this),
             ::onPinWidget,
+            ::onPinShortcut,
         )
 
         setContentDesign(design)
@@ -85,6 +88,16 @@ class AppSettingsActivity : BaseActivity<AppSettingsDesign>(), Behavior {
             ToggleWidget.requestPin(this) -> R.string.widget_pin_requested
             ToggleWidget.isPinSupported(this) -> R.string.widget_pin_failed
             else -> R.string.widget_pin_unsupported
+        }
+
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+    }
+
+    private fun onPinShortcut() {
+        val message = when {
+            ClashShortcut.requestPinToggle(this) -> R.string.shortcut_pin_requested
+            ClashShortcut.isPinShortcutSupported(this) -> R.string.shortcut_pin_failed
+            else -> R.string.shortcut_pin_unsupported
         }
 
         Toast.makeText(this, message, Toast.LENGTH_LONG).show()

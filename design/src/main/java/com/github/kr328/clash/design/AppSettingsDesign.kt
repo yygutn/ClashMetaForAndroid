@@ -20,7 +20,9 @@ class AppSettingsDesign(
     behavior: Behavior,
     running: Boolean,
     onHideIconChange: (hide: Boolean) -> Unit,
+    widgetProviderCount: Int,
     onPinWidget: () -> Unit,
+    onPinShortcut: () -> Unit,
 ) : Design<AppSettingsDesign.Request>(context) {
     enum class Request {
         ReCreateAllActivities
@@ -103,9 +105,21 @@ class AppSettingsDesign(
             category(R.string.widget_toggle_category)
 
             clickable(
+                title = R.string.shortcut_pin_title,
+                icon = R.drawable.ic_clash,
+                summary = R.string.shortcut_pin_summary,
+            ) {
+                clicked(onPinShortcut)
+            }
+
+            clickable(
                 title = R.string.widget_pin_title,
                 icon = R.drawable.ic_baseline_extension,
-                summary = R.string.widget_pin_summary,
+                summary = if (widgetProviderCount > 0) {
+                    R.string.widget_provider_registered
+                } else {
+                    R.string.widget_provider_missing
+                },
             ) {
                 clicked(onPinWidget)
             }

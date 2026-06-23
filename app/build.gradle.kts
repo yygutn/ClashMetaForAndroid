@@ -8,6 +8,17 @@ plugins {
     id("com.android.application")
 }
 
+android {
+    sourceSets {
+        getByName("alpha") {
+            res.srcDirs("src/alpha/res")
+        }
+        getByName("meta") {
+            res.srcDirs("src/meta/res")
+        }
+    }
+}
+
 dependencies {
     compileOnly(project(":hideapi"))
 

@@ -364,7 +364,14 @@
     <string name="widget_pin_requested">Confirm adding the widget on the system dialog, then drag it to negative screen if needed</string>
     <string name="widget_pin_unsupported">This device does not support pinning widgets from the app. Add it from the launcher widget picker instead</string>
     <string name="widget_pin_failed">Unable to open the widget pin dialog. Try adding it from the launcher widget picker</string>
-    <string name="widget_honor_tips"><![CDATA[<b>MagicOS 10 note</b><br/>The negative screen <b>service card list</b> usually only shows apps registered on the Honor Smart Service platform. If it is missing there, add the widget on the home screen first and try dragging it to negative screen.<br/><br/>Recommended steps:<br/>1. Tap Add toggle widget above and confirm the system dialog<br/>2. Pinch on home screen → Widgets → Clash Meta<br/>3. Long-press the home screen widget and try dragging it to negative screen<br/>4. After a fresh install, clear data for <b>Honor negative screen, Honor Quick Service, and Honor Launcher</b> in Settings → Apps]]></string>
+    <string name="widget_provider_registered">Widget registered by the system (if it still does not appear in the picker, MagicOS may hide sideloaded widgets)</string>
+    <string name="widget_provider_missing">Widget not registered by the system. Try reinstalling the app</string>
+    <string name="shortcut_pin_title">Add home screen shortcut</string>
+    <string name="shortcut_pin_summary">Pin a one-tap Clash toggle icon to the home screen (more reliable than widgets on MagicOS)</string>
+    <string name="shortcut_pin_requested">Confirm on the system dialog to pin the shortcut to your home screen</string>
+    <string name="shortcut_pin_unsupported">Pinning shortcuts is not supported. Long-press the app icon to use shortcuts instead</string>
+    <string name="shortcut_pin_failed">Unable to open the pin shortcut dialog. Long-press the app icon to add manually</string>
+    <string name="widget_honor_tips"><![CDATA[<b>MagicOS 10 recommendations (most reliable first)</b><br/>1. <b>Notification shade</b> → Edit quick settings → Add the Clash Meta tile (most reliable)<br/>2. <b>Add home screen shortcut</b> (button above) → Confirm the system dialog → One-tap toggle<br/>3. <b>Long-press app icon</b> → Choose Toggle Clash (requires visible app icon)<br/>4. <b>Home screen widget</b>: sideloaded apps are often hidden on MagicOS 10; the negative screen + list only shows apps registered on Honor Smart Service<br/><br/>After a fresh install, clear data for <b>Honor negative screen, Honor Quick Service, and Honor Launcher</b> in Settings → Apps]]></string>
 
     <string name="hide_app_icon_title">Hide App Icon</string>
     <string name="hide_app_icon_desc">You can dial *#*#252746382#*#* to open this App</string>
