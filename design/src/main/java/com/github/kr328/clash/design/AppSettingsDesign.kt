@@ -20,6 +20,7 @@ class AppSettingsDesign(
     behavior: Behavior,
     running: Boolean,
     onHideIconChange: (hide: Boolean) -> Unit,
+    onPinWidget: () -> Unit,
 ) : Design<AppSettingsDesign.Request>(context) {
     enum class Request {
         ReCreateAllActivities
@@ -98,6 +99,18 @@ class AppSettingsDesign(
             ) {
                 enabled = !running
             }
+
+            category(R.string.widget_toggle_category)
+
+            clickable(
+                title = R.string.widget_pin_title,
+                icon = R.drawable.ic_baseline_extension,
+                summary = R.string.widget_pin_summary,
+            ) {
+                clicked(onPinWidget)
+            }
+
+            tips(R.string.widget_honor_tips)
         }
 
         binding.content.addView(screen.root)

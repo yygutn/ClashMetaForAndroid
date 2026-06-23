@@ -2,12 +2,15 @@ package com.github.kr328.clash
 
 import android.content.ComponentName
 import android.content.pm.PackageManager
+import android.widget.Toast
 import com.github.kr328.clash.common.util.componentName
 import com.github.kr328.clash.design.AppSettingsDesign
+import com.github.kr328.clash.design.R
 import com.github.kr328.clash.design.model.Behavior
 import com.github.kr328.clash.design.store.UiStore.Companion.mainActivityAlias
 import com.github.kr328.clash.service.store.ServiceStore
 import com.github.kr328.clash.util.ApplicationObserver
+import com.github.kr328.clash.util.ToggleWidget
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.selects.select
 
@@ -20,6 +23,7 @@ class AppSettingsActivity : BaseActivity<AppSettingsDesign>(), Behavior {
             this,
             clashRunning,
             ::onHideIconChange,
+            ::onPinWidget,
         )
 
         setContentDesign(design)
@@ -74,5 +78,15 @@ class AppSettingsActivity : BaseActivity<AppSettingsDesign>(), Behavior {
             newState,
             PackageManager.DONT_KILL_APP
         )
+    }
+
+    private fun onPinWidget() {
+        val message = when {
+            ToggleWidget.requestPin(this) -> R.string.widget_pin_requested
+            ToggleWidget.isPinSupported(this) -> R.string.widget_pin_failed
+            else -> R.string.widget_pin_unsupported
+        }
+
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
     }
 }

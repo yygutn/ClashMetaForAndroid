@@ -12,30 +12,8 @@ import com.github.kr328.clash.common.constants.Intents
 import com.github.kr328.clash.design.R as DesignR
 import com.github.kr328.clash.remote.StatusClient
 import com.github.kr328.clash.service.R as ServiceR
-import com.github.kr328.clash.util.startClashService
-import com.github.kr328.clash.util.stopClashService
 
 class ToggleWidgetProvider : AppWidgetProvider() {
-    override fun onReceive(context: Context, intent: Intent) {
-        when (intent.action) {
-            Intents.ACTION_WIDGET_TOGGLE -> {
-                handleToggle(context)
-                updateAll(context)
-                return
-            }
-            Intents.ACTION_CLASH_STARTED,
-            Intents.ACTION_CLASH_STOPPED,
-            Intents.ACTION_PROFILE_LOADED,
-            Intents.ACTION_SERVICE_RECREATED,
-            -> {
-                updateAll(context)
-                return
-            }
-        }
-
-        super.onReceive(context, intent)
-    }
-
     override fun onUpdate(
         context: Context,
         appWidgetManager: AppWidgetManager,
@@ -43,21 +21,6 @@ class ToggleWidgetProvider : AppWidgetProvider() {
     ) {
         appWidgetIds.forEach { appWidgetId ->
             updateWidget(context, appWidgetManager, appWidgetId)
-        }
-    }
-
-    private fun handleToggle(context: Context) {
-        val status = StatusClient(context)
-
-        if (status.isServiceRunning()) {
-            context.stopClashService()
-            return
-        }
-
-        val vpnRequest = context.startClashService()
-        if (vpnRequest != null) {
-            vpnRequest.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            context.startActivity(vpnRequest)
         }
     }
 
@@ -95,7 +58,7 @@ class ToggleWidgetProvider : AppWidgetProvider() {
                 },
             )
 
-            val toggleIntent = Intent(context, ToggleWidgetProvider::class.java).apply {
+            val toggleIntent = Intent(context, ToggleWidgetReceiver::class.java).apply {
                 action = Intents.ACTION_WIDGET_TOGGLE
             }
             val pendingIntent = PendingIntent.getBroadcast(

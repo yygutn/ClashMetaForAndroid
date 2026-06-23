@@ -226,22 +226,28 @@
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
-            <intent-filter>
-                <action android:name="${applicationId}.action.WIDGET_TOGGLE" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="${applicationId}.intent.action.CLASH_STARTED" />
-                <action android:name="${applicationId}.intent.action.CLASH_STOPPED" />
-                <action android:name="${applicationId}.intent.action.PROFILE_LOADED" />
-                <action android:name="${applicationId}.intent.action.CLASH_RECREATED" />
-            </intent-filter>
 
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/widget_toggle_info" />
             <meta-data
+                android:name="android.appwidget.honor.provider"
+                android:resource="@xml/widget_toggle_info" />
+            <meta-data
                 android:name="com.hihonor.widget.type"
                 android:value="honorcard" />
+        </receiver>
+
+        <receiver
+            android:name=".ToggleWidgetReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="${applicationId}.action.WIDGET_TOGGLE" />
+                <action android:name="${applicationId}.intent.action.CLASH_STARTED" />
+                <action android:name="${applicationId}.intent.action.CLASH_STOPPED" />
+                <action android:name="${applicationId}.intent.action.PROFILE_LOADED" />
+                <action android:name="${applicationId}.intent.action.CLASH_RECREATED" />
+            </intent-filter>
         </receiver>
     </application>
 </manifest>

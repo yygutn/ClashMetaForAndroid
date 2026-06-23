@@ -358,6 +358,13 @@
     <string name="external_control_stopped">Clash.Meta service stopped</string>
     <string name="widget_toggle_label">Clash Toggle</string>
     <string name="widget_toggle_description">Quickly start or stop Clash Meta from your home screen or negative screen.</string>
+    <string name="widget_toggle_category">Home screen widget</string>
+    <string name="widget_pin_title">Add toggle widget</string>
+    <string name="widget_pin_summary">Pin the 2×1 Clash switch card to home screen or negative screen</string>
+    <string name="widget_pin_requested">Confirm adding the widget on the system dialog, then drag it to negative screen if needed</string>
+    <string name="widget_pin_unsupported">This device does not support pinning widgets from the app. Add it from the launcher widget picker instead</string>
+    <string name="widget_pin_failed">Unable to open the widget pin dialog. Try adding it from the launcher widget picker</string>
+    <string name="widget_honor_tips"><![CDATA[If the card is missing on Honor negative screen, try:<br/>1. Use the button above, then drag the card to negative screen<br/>2. Pinch on home screen → Widgets → Clash Meta<br/>3. On negative screen, tap <b>+</b> and search <b>Clash</b><br/>4. Swipe up from a bottom corner → Honor Quick Service → Cards]]></string>
 
     <string name="hide_app_icon_title">Hide App Icon</string>
     <string name="hide_app_icon_desc">You can dial *#*#252746382#*#* to open this App</string>
