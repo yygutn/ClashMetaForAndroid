@@ -364,7 +364,7 @@
     <string name="widget_pin_requested">Confirm adding the widget on the system dialog, then drag it to negative screen if needed</string>
     <string name="widget_pin_unsupported">This device does not support pinning widgets from the app. Add it from the launcher widget picker instead</string>
     <string name="widget_pin_failed">Unable to open the widget pin dialog. Try adding it from the launcher widget picker</string>
-    <string name="widget_honor_tips"><![CDATA[If the card is missing on Honor negative screen, try:<br/>1. Use the button above, then drag the card to negative screen<br/>2. Pinch on home screen → Widgets → Clash Meta<br/>3. On negative screen, tap <b>+</b> and search <b>Clash</b><br/>4. Swipe up from a bottom corner → Honor Quick Service → Cards]]></string>
+    <string name="widget_honor_tips"><![CDATA[<b>MagicOS 10 note</b><br/>The negative screen <b>service card list</b> usually only shows apps registered on the Honor Smart Service platform. If it is missing there, add the widget on the home screen first and try dragging it to negative screen.<br/><br/>Recommended steps:<br/>1. Tap Add toggle widget above and confirm the system dialog<br/>2. Pinch on home screen → Widgets → Clash Meta<br/>3. Long-press the home screen widget and try dragging it to negative screen<br/>4. After a fresh install, clear data for <b>Honor negative screen, Honor Quick Service, and Honor Launcher</b> in Settings → Apps]]></string>
 
     <string name="hide_app_icon_title">Hide App Icon</string>
     <string name="hide_app_icon_desc">You can dial *#*#252746382#*#* to open this App</string>

@@ -279,7 +279,7 @@
     <string name="widget_pin_requested">请在系统弹窗中确认添加，再按需拖到负一屏</string>
     <string name="widget_pin_unsupported">当前系统不支持从应用内直接添加卡片，请从桌面小组件列表手动添加</string>
     <string name="widget_pin_failed">无法打开添加卡片弹窗，请从桌面小组件列表手动添加</string>
-    <string name="widget_honor_tips"><![CDATA[若在荣耀负一屏找不到卡片，请尝试：<br/>1. 点击上方「添加开关卡片」，确认后拖到负一屏<br/>2. 桌面双指捏合 → 桌面卡片/小组件 → Clash Meta<br/>3. 负一屏点 <b>+</b>，搜索 <b>Clash</b><br/>4. 从屏幕底角上滑 → 荣耀快服务 → 卡片服务]]></string>
+    <string name="widget_honor_tips"><![CDATA[<b>MagicOS 10 说明</b><br/>负一屏「+」里的<b>服务卡片列表</b>通常只显示已在荣耀智慧服务平台登记的应用；未登记时请在桌面添加后再尝试拖到负一屏。<br/><br/>推荐步骤：<br/>1. 点击上方「添加开关卡片」→ 确认系统弹窗<br/>2. 桌面双指捏合 → 桌面卡片/小组件 → Clash Meta<br/>3. 长按桌面卡片，尝试拖到负一屏<br/>4. 若刚安装新版本：设置 → 应用 → 分别清除<b>负一屏、荣耀快服务、荣耀桌面</b>的数据后重试]]></string>
     <string name="import_from_qr_no_permission">相机权限受限，请前往设置开启。</string>
     <string name="import_from_qr_exception">发生系统未知异常，操作失败。</string>
 
