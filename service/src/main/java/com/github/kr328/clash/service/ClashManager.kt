@@ -10,6 +10,7 @@ import com.github.kr328.clash.service.remote.IClashManager
 import com.github.kr328.clash.service.remote.ILogObserver
 import com.github.kr328.clash.service.store.ServiceStore
 import com.github.kr328.clash.service.util.sendOverrideChanged
+import com.github.kr328.clash.service.util.sendSelectorChanged
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.ReceiveChannel
 
@@ -52,6 +53,7 @@ class ClashManager(private val context: Context) : IClashManager,
 
             if (it) {
                 SelectionDao().setSelected(Selection(current, group, name))
+                context.sendSelectorChanged(group)
             } else {
                 SelectionDao().removeSelected(current, group)
             }

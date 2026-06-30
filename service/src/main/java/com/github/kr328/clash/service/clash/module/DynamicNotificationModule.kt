@@ -17,6 +17,7 @@ import com.github.kr328.clash.core.util.trafficDownload
 import com.github.kr328.clash.core.util.trafficUpload
 import com.github.kr328.clash.service.R
 import com.github.kr328.clash.service.StatusProvider
+import com.github.kr328.clash.service.util.NotificationProxy
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.selects.select
@@ -44,15 +45,17 @@ class DynamicNotificationModule(service: Service) : Module<Unit>(service) {
     private val notificationManager = NotificationManagerCompat.from(service)
 
     private fun update() {
+        val profileName = StatusProvider.currentProfile ?: "Not selected"
         val now = Clash.queryTrafficNow()
         val total = Clash.queryTrafficTotal()
-
         val uploading = now.trafficUpload()
         val downloading = now.trafficDownload()
         val uploaded = total.trafficUpload()
         val downloaded = total.trafficDownload()
+        val node = NotificationProxy.resolveCurrentNode(service)
 
         val notification = builder
+            .setContentTitle(NotificationProxy.formatTitle(profileName, node))
             .setContentText(
                 service.getString(
                     R.string.clash_notification_content,
@@ -82,6 +85,14 @@ class DynamicNotificationModule(service: Service) : Module<Unit>(service) {
             addAction(Intents.ACTION_PROFILE_LOADED)
         }
 
+        val selectorChanged = receiveBroadcast(capacity = Channel.CONFLATED) {
+            addAction(Intents.ACTION_SELECTOR_CHANGED)
+        }
+
+        val overrideChanged = receiveBroadcast(capacity = Channel.CONFLATED) {
+            addAction(Intents.ACTION_OVERRIDE_CHANGED)
+        }
+
         val ticker = ticker(TimeUnit.SECONDS.toMillis(1))
 
         while (true) {
@@ -95,7 +106,13 @@ class DynamicNotificationModule(service: Service) : Module<Unit>(service) {
                     }
                 }
                 profileLoaded.onReceive {
-                    builder.setContentTitle(StatusProvider.currentProfile ?: "Not selected")
+                    update()
+                }
+                selectorChanged.onReceive {
+                    update()
+                }
+                overrideChanged.onReceive {
+                    update()
                 }
                 if (shouldUpdate) {
                     ticker.onReceive {
