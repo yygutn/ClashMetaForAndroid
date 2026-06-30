@@ -48,6 +48,13 @@ fun Context.sendOverrideChanged() {
     sendBroadcastSelf(intent)
 }
 
+fun Context.sendSelectorChanged(group: String) {
+    val intent = Intent(Intents.ACTION_SELECTOR_CHANGED)
+        .putExtra(Intents.EXTRA_NAME, group)
+
+    sendBroadcastSelf(intent)
+}
+
 fun Context.sendServiceRecreated() {
     sendBroadcastSelf(Intent(Intents.ACTION_SERVICE_RECREATED))
 }
