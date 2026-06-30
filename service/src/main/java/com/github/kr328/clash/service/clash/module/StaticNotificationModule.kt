@@ -43,8 +43,8 @@ class StaticNotificationModule(service: Service) : Module<Unit>(service) {
         val node = NotificationProxy.resolveCurrentNode(service)
 
         val notification = builder
-            .setContentTitle(profileName)
-            .setContentText(node)
+            .setContentTitle(NotificationProxy.formatTitle(profileName, node))
+            .setContentText(service.getText(R.string.running))
             .build()
 
         service.startForegroundCompat(R.id.nf_clash_status, notification)

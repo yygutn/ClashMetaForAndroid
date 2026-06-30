@@ -45,19 +45,29 @@ class DynamicNotificationModule(service: Service) : Module<Unit>(service) {
     private val notificationManager = NotificationManagerCompat.from(service)
 
     private fun update() {
+        val profileName = StatusProvider.currentProfile ?: "Not selected"
         val now = Clash.queryTrafficNow()
+        val total = Clash.queryTrafficTotal()
         val uploading = now.trafficUpload()
         val downloading = now.trafficDownload()
+        val uploaded = total.trafficUpload()
+        val downloaded = total.trafficDownload()
         val node = NotificationProxy.resolveCurrentNode(service)
 
         val notification = builder
+            .setContentTitle(NotificationProxy.formatTitle(profileName, node))
             .setContentText(
                 service.getString(
                     R.string.clash_notification_content,
                     "$uploading/s", "$downloading/s"
                 )
             )
-            .setSubText(node)
+            .setSubText(
+                service.getString(
+                    R.string.clash_notification_content,
+                    uploaded, downloaded
+                )
+            )
             .build()
 
         notificationManager.notify(R.id.nf_clash_status, notification)
@@ -96,7 +106,6 @@ class DynamicNotificationModule(service: Service) : Module<Unit>(service) {
                     }
                 }
                 profileLoaded.onReceive {
-                    builder.setContentTitle(StatusProvider.currentProfile ?: "Not selected")
                     update()
                 }
                 selectorChanged.onReceive {

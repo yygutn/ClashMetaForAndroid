@@ -17,6 +17,10 @@ object NotificationProxy {
         "代理",
     )
 
+    fun formatTitle(profileName: String, node: String): String {
+        return "$profileName | $node"
+    }
+
     fun resolveCurrentNode(context: Context): String {
         return when (Clash.queryTunnelState().mode) {
             TunnelState.Mode.Direct -> context.getString(R.string.direct_mode)
