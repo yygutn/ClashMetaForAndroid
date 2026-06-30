@@ -2,9 +2,12 @@ package com.github.kr328.clash
 
 import com.github.kr328.clash.common.util.intent
 import com.github.kr328.clash.core.Clash
-import com.github.kr328.clash.core.model.Proxy
+import com.github.kr328.clash.core.model.ProxySort
 import com.github.kr328.clash.design.ProxyDesign
 import com.github.kr328.clash.design.model.ProxyState
+import com.github.kr328.clash.design.store.ProxyDelayStore
+import com.github.kr328.clash.design.util.sortedByProxySort
+import com.github.kr328.clash.service.store.ServiceStore
 import com.github.kr328.clash.util.withClash
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -19,6 +22,8 @@ class ProxyActivity : BaseActivity<ProxyDesign>() {
         val states = List(names.size) { ProxyState("?") }
         val unorderedStates = names.indices.map { names[it] to states[it] }.toMap()
         val reloadLock = Semaphore(10)
+        val delayStore = ProxyDelayStore(this)
+        val activeProfile = ServiceStore(this).activeProfile
 
         val design = ProxyDesign(
             this,
@@ -63,18 +68,35 @@ class ProxyActivity : BaseActivity<ProxyDesign>() {
                         }
                         is ProxyDesign.Request.Reload -> {
                             launch {
+                                val groupName = names[it.index]
                                 val group = reloadLock.withPermit {
                                     withClash {
-                                        queryProxyGroup(names[it.index], uiStore.proxySort)
+                                        queryProxyGroup(groupName, uiStore.proxySort)
                                     }
                                 }
                                 val state = states[it.index]
+
+                                activeProfile?.let { profile ->
+                                    delayStore.saveGroup(profile, groupName, group.proxies)
+                                }
+
+                                val proxies = activeProfile
+                                    ?.let { profile ->
+                                        delayStore.merge(profile, groupName, group.proxies)
+                                    }
+                                    ?: group.proxies
+
+                                val sortedProxies = if (uiStore.proxySort == ProxySort.Delay) {
+                                    proxies.sortedByProxySort(ProxySort.Delay)
+                                } else {
+                                    proxies
+                                }
 
                                 state.now = group.now
 
                                 design.updateGroup(
                                     it.index,
-                                    group.proxies,
+                                    sortedProxies,
                                     group.type == "Selector",
                                     state,
                                     unorderedStates
