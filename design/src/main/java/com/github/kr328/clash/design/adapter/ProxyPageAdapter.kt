@@ -1,6 +1,7 @@
 package com.github.kr328.clash.design.adapter
 
 import android.view.ViewGroup
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.kr328.clash.core.model.Proxy
 import com.github.kr328.clash.design.R
@@ -25,6 +26,8 @@ class ProxyPageAdapter(
 
     val states = List(adapters.size) { ProxyPageState() }
 
+    private val scrollToPositions = mutableMapOf<Int, Int>()
+
     suspend fun updateAdapter(
         position: Int,
         proxies: List<Proxy>,
@@ -40,12 +43,20 @@ class ProxyPageAdapter(
             }
         }
 
+        val selectedIndex = proxies.indexOfFirst { it.name == parent.now }
+        if (selectedIndex >= 0) {
+            scrollToPositions[position] = selectedIndex
+        } else {
+            scrollToPositions.remove(position)
+        }
+
         withContext(Dispatchers.Main) {
             adapters[position].apply {
                 this.selectable = selectable
                 this.swapDataSet(this::states, states, false)
             }
 
+            scrollToSelected(position)
             requestRedrawVisible()
         }
     }
@@ -85,6 +96,10 @@ class ProxyPageAdapter(
             this.position = position
             this.swapAdapter(adapter, false)
         }
+
+        scrollToPositions[position]?.let { scrollTo ->
+            scrollRecyclerTo(holder.recyclerView, scrollTo)
+        }
     }
 
     override fun getItemCount(): Int {
@@ -101,6 +116,23 @@ class ProxyPageAdapter(
         this.parent = null
     }
 
+
+    private fun scrollToSelected(position: Int) {
+        val scrollTo = scrollToPositions[position] ?: return
+
+        parent?.findViewHolderForAdapterPosition(position)?.let { holder ->
+            scrollRecyclerTo(factory.fromRoot(holder.itemView).recyclerView, scrollTo)
+        }
+    }
+
+    private fun scrollRecyclerTo(recyclerView: RecyclerView, position: Int) {
+        recyclerView.post {
+            val layoutManager = recyclerView.layoutManager as? GridLayoutManager ?: return@post
+            val offset = (recyclerView.height / 3).coerceAtLeast(0)
+
+            layoutManager.scrollToPositionWithOffset(position, offset)
+        }
+    }
 
     private var RecyclerView.position: Int
         get() {

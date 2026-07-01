@@ -26,8 +26,8 @@ class ProxyViewState(
     var controls: Int = config.unselectedControl
 
     private var delay: Int = 0
-    private var selected: Boolean = false
-    private var parentNow: String = ""
+    private var selected: Boolean = proxy.name == parent.now
+    private var parentNow: String = parent.now
     private var linkNow: String? = null
 
     private var lastFrameTime = System.currentTimeMillis()
@@ -61,7 +61,7 @@ class ProxyViewState(
             delayText = if (proxy.delay in 0..Short.MAX_VALUE) proxy.delay.toString() else ""
         }
 
-        if (parentNow !== parent.now) {
+        if (parentNow != parent.now) {
             parentNow = parent.now
             selected = proxy.name == parent.now
         }
