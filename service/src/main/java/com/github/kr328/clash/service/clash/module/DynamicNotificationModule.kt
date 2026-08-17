@@ -44,6 +44,11 @@ class DynamicNotificationModule(service: Service) : Module<Unit>(service) {
 
     private val notificationManager = NotificationManagerCompat.from(service)
 
+    // 当前节点名缓存：resolveCurrentNode 需要多次 JNI 全量代理组查询，
+    // 大订阅时开销极高。仅在 profile/selector/override 变化时失效重算，
+    // 每秒的 ticker 只刷新流量数字，不再重复解析节点。
+    private var cachedNode: String? = null
+
     private fun update() {
         val profileName = StatusProvider.currentProfile ?: "Not selected"
         val now = Clash.queryTrafficNow()
@@ -52,7 +57,7 @@ class DynamicNotificationModule(service: Service) : Module<Unit>(service) {
         val downloading = now.trafficDownload()
         val uploaded = total.trafficUpload()
         val downloaded = total.trafficDownload()
-        val node = NotificationProxy.resolveCurrentNode(service)
+        val node = cachedNode ?: NotificationProxy.resolveCurrentNode(service).also { cachedNode = it }
 
         val notification = builder
             .setContentTitle(NotificationProxy.formatTitle(profileName, node))
@@ -106,12 +111,18 @@ class DynamicNotificationModule(service: Service) : Module<Unit>(service) {
                     }
                 }
                 profileLoaded.onReceive {
+                    cachedNode = null
+
                     update()
                 }
                 selectorChanged.onReceive {
+                    cachedNode = null
+
                     update()
                 }
                 overrideChanged.onReceive {
+                    cachedNode = null
+
                     update()
                 }
                 if (shouldUpdate) {

@@ -21,6 +21,14 @@ object NotificationProxy {
         return "$profileName | $node"
     }
 
+    // 目标组解析缓存：查找 Selector 类型组可能需要逐组全量查询（JNI + JSON 反序列化），
+    // 订阅组多时开销大。key 为 组名列表 + 最近浏览的组，任一变化才重新解析。
+    @Volatile
+    private var cachedResolveKey: List<String?>? = null
+
+    @Volatile
+    private var cachedTargetGroup: String? = null
+
     fun resolveCurrentNode(context: Context): String {
         return when (Clash.queryTunnelState().mode) {
             TunnelState.Mode.Direct -> context.getString(R.string.direct_mode)
@@ -38,6 +46,21 @@ object NotificationProxy {
 
         val prefs = context.getSharedPreferences(UI_PREFERENCE_NAME, Context.MODE_PRIVATE)
         val lastGroup = prefs.getString(PROXY_LAST_GROUP_KEY, null)
+
+        val key = listOf(lastGroup) + names
+        if (key == cachedResolveKey) {
+            return cachedTargetGroup
+        }
+
+        val resolved = resolveTargetGroupUncached(names, lastGroup)
+
+        cachedResolveKey = key
+        cachedTargetGroup = resolved
+
+        return resolved
+    }
+
+    private fun resolveTargetGroupUncached(names: List<String>, lastGroup: String?): String? {
         if (!lastGroup.isNullOrBlank() && lastGroup in names) {
             return lastGroup
         }
