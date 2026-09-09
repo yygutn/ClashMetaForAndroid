@@ -39,6 +39,23 @@ class ProxyDelayStore(context: Context) {
         }
     }
 
+    fun clearGroup(profile: UUID, group: String) {
+        val prefix = "$profile|$group|"
+        val editor = prefs.edit()
+        var changed = false
+
+        prefs.all.keys.forEach { storedKey ->
+            if (storedKey.startsWith(prefix)) {
+                editor.remove(storedKey)
+                changed = true
+            }
+        }
+
+        if (changed) {
+            editor.apply()
+        }
+    }
+
     fun clearProfile(profile: UUID) {
         val prefix = "$profile|"
         val editor = prefs.edit()
