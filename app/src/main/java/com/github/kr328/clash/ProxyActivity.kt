@@ -118,6 +118,10 @@ class ProxyActivity : BaseActivity<ProxyDesign>() {
                                     healthCheck(names[it.index])
                                 }
 
+                                activeProfile?.let { profile ->
+                                    delayStore.clearGroup(profile, names[it.index])
+                                }
+
                                 design.requests.send(ProxyDesign.Request.Reload(it.index))
                             }
                         }
