@@ -11,14 +11,12 @@ import com.github.kr328.clash.common.compat.pendingIntentFlags
 import com.github.kr328.clash.common.compat.startForegroundCompat
 import com.github.kr328.clash.common.constants.Components
 import com.github.kr328.clash.common.constants.Intents
-import com.github.kr328.clash.common.util.ticker
 import com.github.kr328.clash.service.R
 import com.github.kr328.clash.service.StatusProvider
 import com.github.kr328.clash.service.util.NotificationProxy
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.selects.select
-import java.util.concurrent.TimeUnit
 
 class StaticNotificationModule(service: Service) : Module<Unit>(service) {
     private val builder = NotificationCompat.Builder(service, CHANNEL_ID)
@@ -60,10 +58,11 @@ class StaticNotificationModule(service: Service) : Module<Unit>(service) {
         val overrideChanged = receiveBroadcast(capacity = Channel.CONFLATED) {
             addAction(Intents.ACTION_OVERRIDE_CHANGED)
         }
-        val ticker = ticker(TimeUnit.SECONDS.toMillis(3))
 
         publish()
 
+        // 纯事件驱动：静态通知没有每秒变化的内容，
+        // 固定周期轮询只会在大订阅配置下空耗 CPU（resolveCurrentNode 开销高）。
         while (true) {
             select<Unit> {
                 profileLoaded.onReceive {
@@ -73,9 +72,6 @@ class StaticNotificationModule(service: Service) : Module<Unit>(service) {
                     publish()
                 }
                 overrideChanged.onReceive {
-                    publish()
-                }
-                ticker.onReceive {
                     publish()
                 }
             }
